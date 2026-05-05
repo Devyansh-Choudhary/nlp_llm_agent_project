@@ -195,18 +195,4 @@ Two sub-calls: first a critic identifies weaknesses, missing angles, and bias fl
 4. **Single-language only** — Queries and responses are English only.
 5. **Groq context window** — Very long topics with many articles may approach token limits at Step 3.
 
----
 
-## Demo Talking Points
-
-**"Show me what Step 3 received and what it returned"**
-→ Open `state_*.json`, find `"all_articles"` (Step 3 input) and `"summaries"` (Step 3 output). The LLM converted unstructured snippets into a uniform JSON array.
-
-**"What happens if the tool call in Step 2 fails?"**
-→ `step2_web_search` wraps each individual query in try/except. A failed query logs a warning and gets an empty list — the chain continues with whatever articles were retrieved. If *all* queries fail, `run_agent` checks for an empty `all_articles` and exits with a helpful message.
-
-**"Why did you choose this prompt for Step 4?"**
-→ The schema-enforced JSON output (`themes[]`, `contradictions[]`, `consensus`) gives Step 5's writer structured data it can address section-by-section, rather than having to re-parse free text.
-
-**"Where does this chain break?"**
-→ Step 3 is most fragile: if the LLM produces malformed JSON for a large article set, the fallback summaries lose the `key_facts` structure. Step 4 then has less to work with, producing shallower themes.
